@@ -18,7 +18,7 @@ public class CardsController {
     }
 
     @GetMapping("/c/{cId}")
-    public Iterable<Card> findByCustomerId(@PathVariable("cId") Long cId){
+    public Iterable<Card> findByCustomerId(@PathVariable("cId") Long cId) {
         return cardsRepository.findAllByCustomerId(cId);
     }
 

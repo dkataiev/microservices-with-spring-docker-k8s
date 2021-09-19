@@ -18,7 +18,7 @@ public class LoansController {
     }
 
     @GetMapping("/c/{cId}")
-    public Iterable<Loan> findByCustomerId(@PathVariable("cId") Long cId){
+    public Iterable<Loan> findByCustomerId(@PathVariable("cId") Long cId) {
         return loansRepository.findByCustomerIdOrderByStartDtDesc(cId);
     }
 

@@ -9,14 +9,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @ComponentScans({
-		@ComponentScan("lab.dkataiev.ms.k8s.cards.controller")
+        @ComponentScan("lab.dkataiev.ms.k8s.cards.controller")
 })
 @EnableJpaRepositories("lab.dkataiev.ms.k8s.cards.repository")
 @EntityScan("lab.dkataiev.ms.k8s.cards.model")
 public class CardsApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CardsApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(CardsApplication.class, args);
+    }
 
 }

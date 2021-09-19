@@ -18,7 +18,7 @@ public class AccountsController {
     }
 
     @GetMapping("/c/{cId}")
-    public Account findByCustomerId(@PathVariable("cId") Long cId){
+    public Account findByCustomerId(@PathVariable("cId") Long cId) {
         return accountsRepository.findByCustomerId(cId).get();
     }
 

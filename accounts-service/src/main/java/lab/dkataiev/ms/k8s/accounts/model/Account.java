@@ -8,7 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.LocalDate;
+import java.sql.Date;
 
 @Entity
 @Getter
@@ -27,7 +27,6 @@ public class Account {
     @Column(name = "branch_address")
     private String branchAddress;
     @Column(name = "create_dt")
-    private LocalDate createDt;
+    private Date createDt;
 
 }
-
