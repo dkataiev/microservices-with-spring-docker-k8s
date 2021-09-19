@@ -17,9 +17,9 @@ public class AccountsController {
         this.accountsRepository = accountsRepository;
     }
 
-    @GetMapping("{id}")
-    public Account findById(@PathVariable("id") Long id){
-        return accountsRepository.findById(id).get();
+    @GetMapping("/c/{cId}")
+    public Account findByCustomerId(@PathVariable("cId") Long cId){
+        return accountsRepository.findByCustomerId(cId).get();
     }
 
 }
