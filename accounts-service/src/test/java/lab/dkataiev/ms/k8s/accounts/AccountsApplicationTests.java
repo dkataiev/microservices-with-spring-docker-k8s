@@ -1,4 +1,4 @@
-package lab.dkataiev.ms.accounts;
+package lab.dkataiev.ms.k8s.accounts;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
