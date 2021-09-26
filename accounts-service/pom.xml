@@ -12,6 +12,7 @@
     <groupId>lab.dkataiev.ms</groupId>
     <artifactId>accounts-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+
     <name>Accounts service</name>
     <description>Accounts Service</description>
 
