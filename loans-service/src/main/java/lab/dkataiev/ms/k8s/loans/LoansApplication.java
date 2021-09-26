@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @ComponentScans({
-        @ComponentScan("lab.dkataiev.ms.k8s.loans.controller")
+        @ComponentScan("lab.dkataiev.ms.k8s.loans.config"),
+        @ComponentScan("lab.dkataiev.ms.k8s.loans.controller"),
+        @ComponentScan("lab.dkataiev.ms.k8s.loans.repository")
 })
 @EnableJpaRepositories("lab.dkataiev.ms.k8s.loans.repository")
 @EntityScan("lab.dkataiev.ms.k8s.loans.model")

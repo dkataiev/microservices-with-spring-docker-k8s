@@ -8,15 +8,18 @@
         <version>2.5.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>lab.dkataiev.ms</groupId>
     <artifactId>accounts-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Accounts service</name>
     <description>Accounts Service</description>
+
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>2020.0.4</spring-cloud.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -50,6 +53,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
