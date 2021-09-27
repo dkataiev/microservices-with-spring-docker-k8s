@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+
+    config-server:
+        image: dkataiev/config-server:latest
+        mem_limit: 700m
+        ports:
+            - "8071:8071"
+        networks:
+            - k8s-bank
+
+    accounts-service:
+        image: dkataiev/accounts-service:latest
+        mem_limit: 700m
+        ports:
+            - "8080:8080"
+        networks:
+            - k8s-bank
+        depends_on:
+            - config-server
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 3
+                window: 120s
+        environment:
+            SPRING_PROFILES_ACTIVE: default
+            SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+
+    loans-service:
+      image: dkataiev/loans-service:latest
+      mem_limit: 700m
+      ports:
+        - "8090:8090"
+      networks:
+        - k8s-bank
+      depends_on:
+        - config-server
+      deploy:
+        restart_policy:
+          condition: on-failure
+          delay: 5s
+          max_attempts: 3
+          window: 120s
+      environment:
+        SPRING_PROFILES_ACTIVE: default
+        SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+
+    cards-service:
+      image: dkataiev/cards-service:latest
+      mem_limit: 700m
+      ports:
+        - "9000:9000"
+      networks:
+        - k8s-bank
+      depends_on:
+        - config-server
+      deploy:
+        restart_policy:
+          condition: on-failure
+          delay: 5s
+          max_attempts: 3
+          window: 120s
+      environment:
+        SPRING_PROFILES_ACTIVE: default
+        SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+
+networks:
+  k8s-bank:
