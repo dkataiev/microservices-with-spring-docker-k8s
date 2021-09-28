@@ -2,11 +2,14 @@ package lab.dkataiev.ms.k8s.cards.controller;
 
 import lab.dkataiev.ms.k8s.cards.config.CardsServiceConfig;
 import lab.dkataiev.ms.k8s.cards.model.Card;
+import lab.dkataiev.ms.k8s.cards.model.Customer;
 import lab.dkataiev.ms.k8s.cards.model.Properties;
 import lab.dkataiev.ms.k8s.cards.repository.CardsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController("/")
@@ -24,6 +27,11 @@ public class CardsController {
     @GetMapping("/c/{cId}")
     public Iterable<Card> findByCustomerId(@PathVariable("cId") Long cId) {
         return cardsRepository.findAllByCustomerId(cId);
+    }
+
+    @PostMapping("/c")
+    public Iterable<Card> findByCustomer(@RequestBody Customer customer) {
+        return cardsRepository.findAllByCustomerId(customer.getCustomerId());
     }
 
     @GetMapping("/properties")
