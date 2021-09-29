@@ -12,7 +12,8 @@
     <groupId>lab.dkataiev.ms</groupId>
     <artifactId>loans-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Loans service</name>
+
+    <name>Loans Service</name>
     <description>Loans Service</description>
 
     <properties>
@@ -69,6 +70,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
     <build>
         <plugins>
             <plugin>

@@ -13,7 +13,7 @@
     <artifactId>cards-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>Cards service</name>
+    <name>Cards Service</name>
     <description>Cards Service</description>
 
     <properties>
