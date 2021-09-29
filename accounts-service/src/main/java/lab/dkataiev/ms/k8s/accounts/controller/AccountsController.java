@@ -42,7 +42,7 @@ public class AccountsController {
 
     @GetMapping("/c/{cId}")
     public Account findByCustomerId(@PathVariable("cId") Long cId) {
-        return accountsRepository.findByCustomerId(cId).get();
+        return accountsRepository.findByCustomerId(cId).orElseThrow();
     }
 
     @GetMapping("/properties")
@@ -56,7 +56,7 @@ public class AccountsController {
     }
 
     @PostMapping("/details")
-    @CircuitBreaker(name="customerDetailsApp")
+    @CircuitBreaker(name="customerDetailsApp", fallbackMethod = "customerDetailsFallback")
     public CustomerDetails getCustomerDetails(@RequestBody Customer customer) {
         Account account = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow();
         List<Loan> loansDetails = loansClient.getLoansDetails(customer);
@@ -65,6 +65,15 @@ public class AccountsController {
                 .account(account)
                 .cards(cardsDetails)
                 .loans(loansDetails)
+                .build();
+    }
+
+    private CustomerDetails customerDetailsFallback(Customer customer, Throwable t){
+        Account account = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow();
+        List<Loan> loans = loansClient.getLoansDetails(customer);
+        return CustomerDetails.builder()
+                .account(account)
+                .loans(loans)
                 .build();
     }
 
