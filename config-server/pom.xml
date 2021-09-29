@@ -12,8 +12,8 @@
     <groupId>lab.dkataiev.ms</groupId>
     <artifactId>config-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    
-    <name>Config server</name>
+
+    <name>Config Server</name>
     <description>Config Server</description>
 
     <properties>
