@@ -5,6 +5,7 @@ import lab.dkataiev.ms.k8s.loans.model.Customer;
 import lab.dkataiev.ms.k8s.loans.model.Loan;
 import lab.dkataiev.ms.k8s.loans.model.Properties;
 import lab.dkataiev.ms.k8s.loans.repository.LoansRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class LoansController {
 
@@ -31,6 +33,7 @@ public class LoansController {
 
     @PostMapping("/c")
     public Iterable<Loan> findByCustomer(@RequestBody Customer customer) {
+        log.info("Getting loans details for customer #{}", customer.getCustomerId());
         return loansRepository.findByCustomerIdOrderByStartDtDesc(customer.getCustomerId());
     }
 

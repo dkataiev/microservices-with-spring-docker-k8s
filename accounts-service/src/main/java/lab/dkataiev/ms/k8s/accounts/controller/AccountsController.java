@@ -1,6 +1,7 @@
 package lab.dkataiev.ms.k8s.accounts.controller;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lab.dkataiev.ms.k8s.accounts.config.AccountsServiceConfig;
 import lab.dkataiev.ms.k8s.accounts.model.Account;
 import lab.dkataiev.ms.k8s.accounts.model.Card;
@@ -56,7 +57,8 @@ public class AccountsController {
     }
 
     @PostMapping("/details")
-    @CircuitBreaker(name="customerDetailsApp", fallbackMethod = "customerDetailsFallback")
+//    @CircuitBreaker(name="customerDetailsApp", fallbackMethod = "customerDetailsFallback")
+    @Retry(name="retryForCustomerDetails", fallbackMethod = "customerDetailsFallback")
     public CustomerDetails getCustomerDetails(@RequestBody Customer customer) {
         Account account = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow();
         List<Loan> loansDetails = loansClient.getLoansDetails(customer);
