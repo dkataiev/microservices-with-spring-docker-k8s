@@ -1,5 +1,6 @@
 package lab.dkataiev.ms.k8s.accounts.controller;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lab.dkataiev.ms.k8s.accounts.config.AccountsServiceConfig;
 import lab.dkataiev.ms.k8s.accounts.model.Account;
 import lab.dkataiev.ms.k8s.accounts.model.Card;
@@ -55,7 +56,8 @@ public class AccountsController {
     }
 
     @PostMapping("/details")
-    public CustomerDetails getCustometDetails(@RequestBody Customer customer) {
+    @CircuitBreaker(name="customerDetailsApp")
+    public CustomerDetails getCustomerDetails(@RequestBody Customer customer) {
         Account account = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow();
         List<Loan> loansDetails = loansClient.getLoansDetails(customer);
         List<Card> cardsDetails = cardsClient.getCardsDetails(customer);
