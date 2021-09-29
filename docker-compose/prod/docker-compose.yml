@@ -10,11 +10,11 @@ services:
         networks:
             - k8s-bank
 
-    accounts-service:
-        image: dkataiev/accounts-service:latest
+    eureka-server:
+        image: dkataiev/eureka-server:latest
         mem_limit: 700m
         ports:
-            - "8080:8080"
+            - "8070:8070"
         networks:
             - k8s-bank
         depends_on:
@@ -26,8 +26,29 @@ services:
                 max_attempts: 3
                 window: 120s
         environment:
+            SPRING_PROFILES_ACTIVE: default
+            SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+
+    accounts-service:
+        image: dkataiev/accounts-service:latest
+        mem_limit: 700m
+        ports:
+            - "8080:8080"
+        networks:
+            - k8s-bank
+        depends_on:
+            - config-server
+            - eureka-server
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 3
+                window: 120s
+        environment:
             SPRING_PROFILES_ACTIVE: prod
             SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+            EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka
 
     loans-service:
         image: dkataiev/loans-service:latest
@@ -38,6 +59,7 @@ services:
             - k8s-bank
         depends_on:
             - config-server
+            - eureka-server
         deploy:
             restart_policy:
                 condition: on-failure
@@ -47,6 +69,7 @@ services:
         environment:
             SPRING_PROFILES_ACTIVE: prod
             SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+            EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka
 
     cards-service:
         image: dkataiev/cards-service:latest
@@ -57,6 +80,7 @@ services:
             - k8s-bank
         depends_on:
             - config-server
+            - eureka-server
         deploy:
             restart_policy:
                 condition: on-failure
@@ -66,6 +90,8 @@ services:
         environment:
             SPRING_PROFILES_ACTIVE: prod
             SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+            EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka
+
 
 networks:
     k8s-bank:

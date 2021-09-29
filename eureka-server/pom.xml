@@ -11,7 +11,7 @@
     <groupId>lab.dkataiev.ms</groupId>
     <artifactId>eureka-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>eureka-server</name>
+    <name>Eureka server</name>
     <description>Eureka Server</description>
     <properties>
         <java.version>11</java.version>
