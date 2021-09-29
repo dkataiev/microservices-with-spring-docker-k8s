@@ -1,6 +1,7 @@
 package lab.dkataiev.ms.k8s.accounts.controller;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import lab.dkataiev.ms.k8s.accounts.config.AccountsServiceConfig;
 import lab.dkataiev.ms.k8s.accounts.model.Account;
@@ -20,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
-
 
 @RestController("/")
 public class AccountsController {
@@ -77,6 +76,16 @@ public class AccountsController {
                 .account(account)
                 .loans(loans)
                 .build();
+    }
+
+    @GetMapping("/hi")
+    @RateLimiter(name = "sayHello", fallbackMethod = "sayHelloFallback")
+    public String sayHello(){
+        return "Hello from K8S Bank!";
+    }
+
+    private String sayHelloFallback(Throwable t){
+        return "Sorry we are busy now.";
     }
 
 }
