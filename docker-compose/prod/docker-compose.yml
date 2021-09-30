@@ -92,6 +92,29 @@ services:
             SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
             EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka
 
+    gateway-server:
+        image: dkataiev/gateway-server:latest
+        mem_limit: 700m
+        ports:
+            - "8072:8072"
+        networks:
+            - k8s-bank
+        depends_on:
+            - config-server
+            - eureka-server
+            - accounts-service
+            - cards-service
+            - loans-service
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 3
+                window: 120s
+        environment:
+            SPRING_PROFILES_ACTIVE: default
+            SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+            EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka
 
 networks:
     k8s-bank:
