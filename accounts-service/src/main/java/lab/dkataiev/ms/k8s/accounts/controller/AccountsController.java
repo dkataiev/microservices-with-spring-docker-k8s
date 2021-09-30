@@ -13,14 +13,18 @@ import lab.dkataiev.ms.k8s.accounts.model.Properties;
 import lab.dkataiev.ms.k8s.accounts.repository.AccountsRepository;
 import lab.dkataiev.ms.k8s.accounts.service.client.CardsFeignClient;
 import lab.dkataiev.ms.k8s.accounts.service.client.LoansFeignClient;
+import lab.dkataiev.ms.k8s.accounts.util.K8SCommons;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static lab.dkataiev.ms.k8s.accounts.util.K8SCommons.CORRELATION_ID;
 
 @RestController("/")
 public class AccountsController {
@@ -58,10 +62,11 @@ public class AccountsController {
     @PostMapping("/details")
 //    @CircuitBreaker(name="customerDetailsApp", fallbackMethod = "customerDetailsFallback")
     @Retry(name="retryForCustomerDetails", fallbackMethod = "customerDetailsFallback")
-    public CustomerDetails getCustomerDetails(@RequestBody Customer customer) {
+    public CustomerDetails getCustomerDetails(@RequestHeader(CORRELATION_ID) String correlationId,
+                                              @RequestBody Customer customer) {
         Account account = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow();
-        List<Loan> loansDetails = loansClient.getLoansDetails(customer);
-        List<Card> cardsDetails = cardsClient.getCardsDetails(customer);
+        List<Loan> loansDetails = loansClient.getLoansDetails(correlationId, customer);
+        List<Card> cardsDetails = cardsClient.getCardsDetails(correlationId, customer);
         return CustomerDetails.builder()
                 .account(account)
                 .cards(cardsDetails)
@@ -69,9 +74,9 @@ public class AccountsController {
                 .build();
     }
 
-    private CustomerDetails customerDetailsFallback(Customer customer, Throwable t){
+    private CustomerDetails customerDetailsFallback(String correlationId, Customer customer, Throwable t){
         Account account = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow();
-        List<Loan> loans = loansClient.getLoansDetails(customer);
+        List<Loan> loans = loansClient.getLoansDetails(correlationId, customer);
         return CustomerDetails.builder()
                 .account(account)
                 .loans(loans)

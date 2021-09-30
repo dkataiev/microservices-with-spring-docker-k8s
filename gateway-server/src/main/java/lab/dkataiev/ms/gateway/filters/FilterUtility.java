@@ -1,10 +1,12 @@
 package lab.dkataiev.ms.gateway.filters;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.server.ServerWebExchange;
 
 import java.util.List;
 
+@UtilityClass
 public class FilterUtility {
 
     public static final String CORRELATION_ID = "k8s-bank-correlation-id";

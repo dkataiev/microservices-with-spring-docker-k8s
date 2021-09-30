@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController("/")
 public class CardsController {
+
+    public static final String CORRELATION_ID = "k8s-bank-correlation-id";
 
     private final CardsRepository cardsRepository;
     private final CardsServiceConfig cardsServiceConfig;
@@ -30,12 +33,13 @@ public class CardsController {
     }
 
     @PostMapping("/c")
-    public Iterable<Card> findByCustomer(@RequestBody Customer customer) {
+    public Iterable<Card> findByCustomer(@RequestHeader(CORRELATION_ID) String correlationId,
+                                         @RequestBody Customer customer) {
         return cardsRepository.findAllByCustomerId(customer.getCustomerId());
     }
 
     @GetMapping("/properties")
-    public Properties getProperties(){
+    public Properties getProperties() {
         return Properties.builder()
                 .msg(cardsServiceConfig.getMsg())
                 .buildVersion(cardsServiceConfig.getBuildVersion())
