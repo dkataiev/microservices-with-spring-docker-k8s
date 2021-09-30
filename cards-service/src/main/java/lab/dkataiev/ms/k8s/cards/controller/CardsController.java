@@ -5,6 +5,7 @@ import lab.dkataiev.ms.k8s.cards.model.Card;
 import lab.dkataiev.ms.k8s.cards.model.Customer;
 import lab.dkataiev.ms.k8s.cards.model.Properties;
 import lab.dkataiev.ms.k8s.cards.repository.CardsRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController("/")
 public class CardsController {
 
@@ -35,7 +37,10 @@ public class CardsController {
     @PostMapping("/c")
     public Iterable<Card> findByCustomer(@RequestHeader(CORRELATION_ID) String correlationId,
                                          @RequestBody Customer customer) {
-        return cardsRepository.findAllByCustomerId(customer.getCustomerId());
+        log.info("Getting cards details for customer #{} started...", customer.getCustomerId());
+        Iterable<Card> cards = cardsRepository.findAllByCustomerId(customer.getCustomerId());
+        log.info("Getting cards details for customer #{} done.", customer.getCustomerId());
+        return cards;
     }
 
     @GetMapping("/properties")

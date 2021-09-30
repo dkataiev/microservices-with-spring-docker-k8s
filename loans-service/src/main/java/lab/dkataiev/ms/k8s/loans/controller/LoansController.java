@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 public class LoansController {
@@ -37,8 +39,10 @@ public class LoansController {
     @PostMapping("/c")
     public Iterable<Loan> findByCustomer(@RequestHeader(CORRELATION_ID) String correlationId,
                                          @RequestBody Customer customer) {
-        log.info("Getting loans details for customer #{}", customer.getCustomerId());
-        return loansRepository.findByCustomerIdOrderByStartDtDesc(customer.getCustomerId());
+        log.info("Getting loans details for customer #{} started...", customer.getCustomerId());
+        List<Loan> loans = loansRepository.findByCustomerIdOrderByStartDtDesc(customer.getCustomerId());
+        log.info("Getting loans details for customer #{} done.", customer.getCustomerId());
+        return loans;
     }
 
     @GetMapping("/properties")

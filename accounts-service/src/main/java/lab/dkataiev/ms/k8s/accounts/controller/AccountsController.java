@@ -14,6 +14,7 @@ import lab.dkataiev.ms.k8s.accounts.repository.AccountsRepository;
 import lab.dkataiev.ms.k8s.accounts.service.client.CardsFeignClient;
 import lab.dkataiev.ms.k8s.accounts.service.client.LoansFeignClient;
 import lab.dkataiev.ms.k8s.accounts.util.K8SCommons;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import static lab.dkataiev.ms.k8s.accounts.util.K8SCommons.CORRELATION_ID;
 
+@Slf4j
 @RestController("/")
 public class AccountsController {
 
@@ -64,9 +66,11 @@ public class AccountsController {
     @Retry(name="retryForCustomerDetails", fallbackMethod = "customerDetailsFallback")
     public CustomerDetails getCustomerDetails(@RequestHeader(CORRELATION_ID) String correlationId,
                                               @RequestBody Customer customer) {
+        log.info("Getting customer details started...");
         Account account = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow();
         List<Loan> loansDetails = loansClient.getLoansDetails(correlationId, customer);
         List<Card> cardsDetails = cardsClient.getCardsDetails(correlationId, customer);
+        log.info("Getting customer details done.");
         return CustomerDetails.builder()
                 .account(account)
                 .cards(cardsDetails)
