@@ -3,6 +3,7 @@ package lab.dkataiev.ms.k8s.accounts.controller;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
+import io.micrometer.core.annotation.Timed;
 import lab.dkataiev.ms.k8s.accounts.config.AccountsServiceConfig;
 import lab.dkataiev.ms.k8s.accounts.model.Account;
 import lab.dkataiev.ms.k8s.accounts.model.Card;
@@ -64,6 +65,7 @@ public class AccountsController {
     @PostMapping("/details")
 //    @CircuitBreaker(name="customerDetailsApp", fallbackMethod = "customerDetailsFallback")
     @Retry(name="retryForCustomerDetails", fallbackMethod = "customerDetailsFallback")
+    @Timed(value = "getCustomerDetails.time", description = "Time taken to return Account Details")
     public CustomerDetails getCustomerDetails(@RequestHeader(CORRELATION_ID) String correlationId,
                                               @RequestBody Customer customer) {
         log.info("Getting customer details started...");
