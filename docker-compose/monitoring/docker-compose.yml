@@ -1,0 +1,165 @@
+version: "3.8"
+
+services:
+
+    prometheus:
+        image: prom/prometheus:latest
+        ports:
+            - "9090:9090"
+        volumes:
+            - ./prometheus.yml:/etc/prometheus/prometheus.yml
+        networks:
+            - k8s-bank
+
+    grafana:
+        image: grafana/grafana:latest
+        ports:
+            - "3000:3000"
+        environment:
+            - GF_SECURITY_ADMIN_USER=admin
+            - GF_SECURITY_ADMIN_PASSWORD=password
+        networks:
+            - k8s-bank
+        depends_on:
+            - prometheus
+
+    zipkin:
+        image: openzipkin/zipkin
+        mem_limit: 700m
+        ports:
+            - "9411:9411"
+        networks:
+            - k8s-bank
+
+    config-server:
+        image: dkataiev/config-server:latest
+        mem_limit: 700m
+        ports:
+            - "8071:8071"
+        networks:
+            - k8s-bank
+        depends_on:
+            - zipkin
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 20s
+                max_attempts: 5
+                window: 160s
+        environment:
+            SPRING_PROFILES_ACTIVE: default
+            SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+
+    eureka-server:
+        image: dkataiev/eureka-server:latest
+        mem_limit: 700m
+        ports:
+            - "8070:8070"
+        networks:
+            - k8s-bank
+        depends_on:
+            - config-server
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 30s
+                max_attempts: 5
+                window: 200s
+        environment:
+            SPRING_PROFILES_ACTIVE: default
+            SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+            SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+
+    accounts-service:
+        image: dkataiev/accounts-service:latest
+        mem_limit: 700m
+        ports:
+            - "8080:8080"
+        networks:
+            - k8s-bank
+        depends_on:
+            - config-server
+            - eureka-server
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 60s
+                max_attempts: 5
+                window: 240s
+        environment:
+            SPRING_PROFILES_ACTIVE: default
+            SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+            EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka
+            SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+
+    loans-service:
+        image: dkataiev/loans-service:latest
+        mem_limit: 700m
+        ports:
+            - "8090:8090"
+        networks:
+            - k8s-bank
+        depends_on:
+            - config-server
+            - eureka-server
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 60s
+                max_attempts: 5
+                window: 240s
+        environment:
+            SPRING_PROFILES_ACTIVE: default
+            SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+            EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka
+            SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+
+    cards-service:
+        image: dkataiev/cards-service:latest
+        mem_limit: 700m
+        ports:
+            - "9000:9000"
+        networks:
+            - k8s-bank
+        depends_on:
+            - config-server
+            - eureka-server
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 60s
+                max_attempts: 5
+                window: 240s
+        environment:
+            SPRING_PROFILES_ACTIVE: default
+            SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+            EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka
+            SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+
+    gateway-server:
+        image: dkataiev/gateway-server:latest
+        mem_limit: 700m
+        ports:
+            - "8072:8072"
+        networks:
+            - k8s-bank
+        depends_on:
+            - config-server
+            - eureka-server
+            - accounts-service
+            - cards-service
+            - loans-service
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 60s
+                max_attempts: 5
+                window: 240s
+        environment:
+            SPRING_PROFILES_ACTIVE: default
+            SPRING_CONFIG_IMPORT: configserver:http://config-server:8071
+            EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka
+            SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+
+networks:
+    k8s-bank:
